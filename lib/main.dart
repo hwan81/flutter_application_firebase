@@ -34,6 +34,11 @@ class _MyAppState extends State<MyApp> {
     db.collection("users").add(user).then((DocumentReference doc) =>
         // ignore: avoid_print
         print('DocumentSnapshot added with ID: ${doc.id}'));
+    db.collection("users").get().then((value) {
+      for (var doc in value.docs) {
+        print('${doc.id} - ${doc.data()}');
+      }
+    });
   }
 
   @override
