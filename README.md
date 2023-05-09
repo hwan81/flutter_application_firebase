@@ -1,16 +1,19 @@
-# flutter_application_firebase
+#flutter  + firebase 
 
-A new Flutter project.
 
-## Getting Started
+https://firebase.google.com/
+- firebase 계정생성
 
-This project is a starting point for a Flutter application.
+https://firebase.google.com/docs/cli?hl=ko&authuser=0#install_the_firebase_cli
+- firebase cli 설치
 
-A few resources to get you started if this is your first Flutter project:
 
-- [Lab: Write your first Flutter app](https://docs.flutter.dev/get-started/codelab)
-- [Cookbook: Useful Flutter samples](https://docs.flutter.dev/cookbook)
+https://console.firebase.google.com/u/0/?hl=ko
+- 콘솔에서 새로운 프로젝트 추가
 
-For help getting started with Flutter development, view the
-[online documentation](https://docs.flutter.dev/), which offers tutorials,
-samples, guidance on mobile development, and a full API reference.
+- 빌드 - firebase 데이터 베이스 사용 (테스트모드)
+- 앱추가를 이용하여 플랫폼 선택
+
+
+https://firebase.google.com/docs/flutter/setup?hl=ko&authuser=0&platform=ios#available-plugins
+- 해당플러그인의 사용법 확인
