@@ -1,7 +1,9 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:firebase_core/firebase_core.dart';
+import 'package:flutter_application_firebase/new_item_page.dart';
 import 'firebase_options.dart';
+import 'package:firebase_messaging/firebase_messaging.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -20,34 +22,93 @@ class MyApp extends StatefulWidget {
 }
 
 class _MyAppState extends State<MyApp> {
-  var db = FirebaseFirestore.instance;
+  late ListView list = ListView.separated(
+      itemBuilder: (context, index) => null,
+      separatorBuilder: (context, index) => const Divider(),
+      itemCount: 10);
 
-  void fb() {
+  @override
+  Widget build(BuildContext context) {
+    return MaterialApp(
+      home: MainPage(list: list),
+    );
+  }
+}
+
+class MainPage extends StatefulWidget {
+  const MainPage({
+    super.key,
+    required this.list,
+  });
+
+  final ListView list;
+
+  @override
+  State<MainPage> createState() => _MainPageState();
+}
+
+class _MainPageState extends State<MainPage> {
+  var db = FirebaseFirestore.instance;
+  late ListView list = ListView.separated(
+      itemBuilder: (context, index) => null,
+      separatorBuilder: (context, index) => const Divider(),
+      itemCount: 10);
+  void register() async {
+    final Map<String, String> itemdata = await Navigator.push(
+        context,
+        MaterialPageRoute(
+          builder: (context) => NewItemPage(),
+        ));
+    fb(itemdata);
+  }
+
+  void getToken() async {
+    final fcmToken = await FirebaseMessaging.instance.getToken();
+    print(fcmToken);
+  }
+
+  void fb(Map<String, String> itemdata) {
     // Create a new user with a first and last name
-    final user = <String, dynamic>{
-      "first": "Ada",
-      "last": "Lovelace",
-      "born": 1815
-    };
 
 // Add a new document with a generated ID
-    db.collection("users").add(user).then((DocumentReference doc) =>
+    db.collection("users").add(itemdata).then((DocumentReference doc) =>
         // ignore: avoid_print
         print('DocumentSnapshot added with ID: ${doc.id}'));
-    db.collection("users").get().then((value) {
-      for (var doc in value.docs) {
-        print('${doc.id} - ${doc.data()}');
-      }
+    showList();
+  }
+
+  void showList() {
+    db.collection('users').where("name", isEqualTo: "홍길동").get().then((value) {
+      setState(() {
+        list = ListView.separated(
+            itemBuilder: (context, index) {
+              Map<dynamic, dynamic> doc = value.docs[index].data();
+              return ListTile(
+                isThreeLine: true,
+                title: Text('${doc['title']}'),
+                subtitle: Text('${doc['location']} \n ${doc['name']}'),
+              );
+            },
+            separatorBuilder: (context, index) => const Divider(),
+            itemCount: value.docs.length);
+      });
     });
   }
 
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
-      home: Scaffold(
-        floatingActionButton: FloatingActionButton(
-            onPressed: fb, child: const Icon(Icons.play_arrow_outlined)),
+    // showList();
+    print('----------');
+    getToken();
+    print('----------');
+    return Scaffold(
+      appBar: AppBar(
+        backgroundColor: Colors.orange,
+        title: const Text('Malbob Market with Firebase'),
       ),
+      body: Center(child: list),
+      floatingActionButton: FloatingActionButton(
+          onPressed: register, child: const Icon(Icons.play_arrow_outlined)),
     );
   }
 }
